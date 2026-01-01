@@ -1,0 +1,5 @@
+{
+  "name": "Artifact AI - Archaeological NLP Analytics",
+  "description": "A domain-specific NLP platform for analyzing archaeological excavation reports, computing site similarity, and uncovering cultural patterns using the Gemini API.",
+  "requestFramePermissions": []
+}
