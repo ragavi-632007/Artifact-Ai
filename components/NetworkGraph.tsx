@@ -53,10 +53,10 @@ const NetworkGraph: React.FC<NetworkGraphProps> = ({ sites, links }) => {
       .data(nodes)
       .join("g")
       .style("cursor", "grab")
-      .call(d3.drag<SVGGElement, any>()
+      .call(d3.drag<SVGGElement, any, SVGGElement>()
         .on("start", dragstarted)
         .on("drag", dragged)
-        .on("end", dragended));
+        .on("end", dragended) as any);
 
     node.append("circle")
       .attr("r", 14)

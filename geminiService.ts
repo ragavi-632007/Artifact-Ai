@@ -44,9 +44,9 @@ export const extractSiteAnalysis = async (
   input: string | File
 ): Promise<Partial<Site>> => {
   try {
-    if (!process.env.API_KEY) {
+    if (!import.meta.env.VITE_GEMINI_API_KEY) {
       throw new Error(
-        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your environment."
+        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your .env file."
       );
     }
 
@@ -70,7 +70,7 @@ export const extractSiteAnalysis = async (
       reportText = reportText.substring(0, 5000) + "... [truncated for length]";
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
     const response = await ai.models.generateContent({
       model: "gemini-2.0-flash",
       contents: `Extract detailed archaeological data from this excavation report. Use professional archaeological terminology.
@@ -178,13 +178,13 @@ export const computeSimilarityExplanation = async (
   siteB: Site
 ): Promise<string> => {
   try {
-    if (!process.env.API_KEY) {
+    if (!import.meta.env.VITE_GEMINI_API_KEY) {
       throw new Error(
-        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your environment."
+        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your .env file."
       );
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
     const prompt = `Perform a domain-specific comparative analysis between two archaeological sites in Tamil Nadu.
     
     SITE A: ${siteA.name}
@@ -245,13 +245,13 @@ export const computeSimilarityExplanation = async (
  */
 export const discoverPatterns = async (allSites: Site[]): Promise<string> => {
   try {
-    if (!process.env.API_KEY) {
+    if (!import.meta.env.VITE_GEMINI_API_KEY) {
       throw new Error(
-        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your environment."
+        "Gemini API key is not configured. Please set VITE_GEMINI_API_KEY in your .env file."
       );
     }
 
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY! });
     const summary = allSites
       .map(
         (s) => `
