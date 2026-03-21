@@ -78,20 +78,7 @@ const SiteDetails: React.FC<SiteDetailsProps> = ({
         [targetSite.id]: explanation,
       }));
     } catch (err: any) {
-      let errorMsg = err.message || "Failed to generate comparison.";
-
-      // Check for quota exceeded error
-      if (
-        err.message?.includes("quota") ||
-        err.message?.includes("RESOURCE_EXHAUSTED")
-      ) {
-        errorMsg =
-          "API quota exceeded. Please wait a moment and try again, or upgrade to a paid plan for unlimited access.";
-      } else if (err.message?.includes("API key")) {
-        errorMsg =
-          "Invalid API key. Please check your VITE_GEMINI_API_KEY in the .env file.";
-      }
-
+      let errorMsg = err.message || "Failed to generate comparison insight.";
       setErrorSimilarity((prev) => ({ ...prev, [targetSite.id]: errorMsg }));
       console.error(err);
     } finally {

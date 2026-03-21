@@ -19,6 +19,16 @@ const App: React.FC = () => {
   const [similarityData, setSimilarityData] = useState<SimilarityResult[]>([]);
   const [globalInsights, setGlobalInsights] = useState<string | null>(null);
   const [isComputingInsights, setIsComputingInsights] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [apiKey, setApiKey] = useState(() => {
+    return typeof window !== 'undefined' ? localStorage.getItem('GEMINI_API_KEY') || '' : '';
+  });
+
+  const handleSaveSettings = () => {
+    localStorage.setItem('GEMINI_API_KEY', apiKey);
+    setShowSettings(false);
+    window.location.reload(); // Reload to apply the new key to service instances
+  };
 
   // Simple cosine-like similarity calculation based on shared categories and materials
   const calculateSim = (a: Site, b: Site) => {
@@ -86,21 +96,33 @@ const App: React.FC = () => {
             <div className="w-8 h-8 bg-[#c45a30] rounded-sm flex items-center justify-center font-bold text-lg">A</div>
             <h1 className="text-xl font-serif tracking-tight">Artifact AI</h1>
           </div>
-          <div className="flex gap-8 overflow-x-auto">
+          <div className="flex gap-8 overflow-x-auto mx-4">
             <NavButton active={activeTab === 'dashboard'} onClick={() => setActiveTab('dashboard')} label="Dashboard" />
             <NavButton active={activeTab === 'similarity'} onClick={() => setActiveTab('similarity')} label="Similarity Matrix" />
             <NavButton active={activeTab === 'network'} onClick={() => setActiveTab('network')} label="Network Analysis" />
             <NavButton active={activeTab === 'reports'} onClick={() => setActiveTab('reports')} label="Reports & Export" />
             <NavButton active={activeTab === 'code'} onClick={() => setActiveTab('code')} label="Pipeline Architect" />
           </div>
-          <button 
-            onClick={handleComputeGlobalInsights}
-            className="hidden md:flex items-center gap-2 bg-[#c45a30] px-4 py-1.5 rounded text-xs font-bold hover:bg-[#a34a28] transition"
-          >
-            {isComputingInsights ? (
-               <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            ) : '✨ Global Insights'}
-          </button>
+          <div className="flex items-center gap-4">
+             <button 
+              onClick={() => setShowSettings(true)}
+              className="p-2 text-gray-400 hover:text-white transition"
+              title="API Settings"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37a1.724 1.724 0 002.572-1.065z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </button>
+            <button 
+              onClick={handleComputeGlobalInsights}
+              className="hidden md:flex items-center gap-2 bg-[#c45a30] px-4 py-1.5 rounded text-xs font-bold hover:bg-[#a34a28] transition"
+            >
+              {isComputingInsights ? (
+                 <span className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              ) : '✨ Global Insights'}
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -118,9 +140,7 @@ const App: React.FC = () => {
           <SimilarityMatrix sites={sites} results={similarityData} />
         )}
         {activeTab === 'network' && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 h-[700px]">
-             <h2 className="text-2xl font-serif mb-4">Inter-Site Relationship Graph</h2>
-             <p className="text-gray-500 mb-6 text-sm">Force-directed visualization of cultural links between Tamil Nadu sites based on material similarity.</p>
+          <div className="w-full h-[800px] mb-12">
              <NetworkGraph sites={sites} links={similarityData} />
           </div>
         )}
@@ -138,6 +158,54 @@ const App: React.FC = () => {
           onClose={() => setSelectedSite(null)} 
           onUpdateSite={handleUpdateSite}
         />
+      )}
+
+      {/* Settings Modal */}
+      {showSettings && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border overflow-hidden">
+            <div className="p-6 border-b flex justify-between items-center">
+              <h3 className="text-lg font-serif">API Configuration</h3>
+              <button onClick={() => setShowSettings(false)} className="text-gray-400 hover:text-gray-600 font-bold text-xl">&times;</button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Gemini API Key</label>
+                <input 
+                  type="password"
+                  placeholder="Paste your API key here..."
+                  className="w-full p-2 border rounded text-xs font-mono"
+                  value={apiKey}
+                  onChange={(e) => setApiKey(e.target.value)}
+                />
+                <p className="text-[10px] text-gray-500 mt-2 leading-relaxed">
+                  Your key is stored locally in your browser. Get a free key from the 
+                  <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" className="text-[#c45a30] hover:underline ml-1">Google AI Studio</a>.
+                </p>
+              </div>
+              <div className="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                <p className="text-[11px] text-[#c45a30] leading-relaxed">
+                  <strong>Quota Optimization:</strong> If your API key hits free-tier limits, the system will automatically fall back to 
+                  heuristic-based "Smart Insights" to maintain functionality.
+                </p>
+              </div>
+            </div>
+            <div className="p-4 bg-gray-50 border-t flex justify-end gap-3">
+              <button 
+                onClick={() => setShowSettings(false)}
+                className="px-4 py-2 text-xs font-bold text-gray-500 hover:text-gray-700"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleSaveSettings}
+                className="px-6 py-2 bg-[#c45a30] text-white text-xs font-bold rounded-lg shadow-md hover:bg-[#a34a28] transition"
+              >
+                Save Configuration
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Global Insights Modal */}
