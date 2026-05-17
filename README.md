@@ -1,20 +1,63 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# ArtifactAI
 
-# Run and deploy your AI Studio app
+ArtifactAI is an AI-powered archaeological document analysis system that uses NLP and machine learning to analyze excavation reports and discover relationships between archaeological sites.
 
-This contains everything you need to run your app locally.
+## 🚀 Features
 
-View your app in AI Studio: https://ai.studio/apps/drive/1nBheOyKkEPWYwJsD4VhEt6aI7aRdF7YN
+* PDF excavation report analysis
+* Text preprocessing and cleaning
+* Semantic embeddings using Sentence Transformers
+* Cosine similarity analysis
+* K-Means clustering
+* t-SNE visualization
+* Interactive frontend dashboard
 
-## Run Locally
+## 🛠️ Tech Stack
 
-**Prerequisites:**  Node.js
+### Frontend
+
+* React.js
+
+### Backend / AI
+
+* Python
+* Flask
+* pdfplumber
+* scikit-learn
+* sentence-transformers
+* pandas
+* matplotlib
+
+## 📂 Workflow
+
+1. Extract text from excavation report PDFs
+2. Preprocess and clean text
+3. Generate embeddings using `all-MiniLM-L6-v2`
+4. Perform similarity analysis and clustering
+5. Visualize relationships between reports in the React dashboard
+
+## 📊 Results
+
+* Processed 31 excavation reports
+* Applied K-Means clustering (`k=4`)
+* Achieved silhouette score of ~0.344
+* Generated semantic relationship visualizations
+
+## ▶️ Installation
+
+```bash
+git clone https://github.com/yourusername/ArtifactAI.git
+cd ArtifactAI
+pip install -r requirements.txt
+```
+
+## ▶️ Run
+
+Frontend:
+
+```bash
+npm install
+npm start
+```
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
